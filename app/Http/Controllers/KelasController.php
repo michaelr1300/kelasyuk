@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Mengikuti;
 use App\Models\Mengajar;
+use App\Models\Kelas;
 use App\Models\User;
 use App\Models\Post;
 

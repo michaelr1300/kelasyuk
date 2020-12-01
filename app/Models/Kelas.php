@@ -9,6 +9,12 @@ class Kelas extends Model
 {
     use HasFactory;
     
+    protected $fillable = [
+        'nama',
+        'deskripsi',
+        'user_id',
+    ];
+
     public function mengajar()
     {
         return $this->hasMany('App\Mengajar');
