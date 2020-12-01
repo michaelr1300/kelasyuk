@@ -15,19 +15,9 @@ class Kelas extends Model
         'user_id',
     ];
 
-    public function mengajar()
-    {
-        return $this->hasMany('App\Mengajar');
-    }
-
     public function mengikuti()
     {
         return $this->hasMany('App\Mengikuti');
-    }
-
-    public function request()
-    {
-        return $this->hasMany('App\Request');
     }
 
     public function user()
@@ -39,5 +29,17 @@ class Kelas extends Model
     {
         return $this->hasMany('App\Post');
     }
+
+    public function mengajar()
+    {
+        return $this->hasMany('App\Mengajar');
+    }
+
+    public function request()
+    {
+        return $this->hasMany('App\Request');
+    }
+
+    
 
 }

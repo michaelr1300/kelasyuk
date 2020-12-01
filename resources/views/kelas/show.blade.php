@@ -7,7 +7,7 @@
             @if(count($kelas) > 0)
                 @foreach (kelas as $kelas)
                 <div class="card">
-                    <div class="card-header">{{ $kelas->nama }}</div>
+                    <div class="card-header">{{ $kelas->deskripsi }}</div>
 
                     <div class="card-body">
                         <div class="alert alert-success" role="alert">
@@ -23,3 +23,4 @@
     </div>
 </div>
 @endsection
+

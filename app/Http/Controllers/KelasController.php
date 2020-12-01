@@ -29,23 +29,16 @@ class KelasController extends Controller
         {
             $mengikutis = Mengikuti::where('user_id', $id)->get();
             $kelas = collect([]);
-            foreach ($kelas as $kelas)
+            foreach ($mengikutis as $mengikuti)
             {
-                $kelas->push(Kelas::find($mengikutis->kelas_id));
+                $kelas->push(Kelas::find($mengikuti->kelas_id));
             }
         }
 
         if (auth()->user()->role === 2) //Guru
         {
-            //$mengajars = Mengajar::where('user_id', $id)->get();
-            $buatKelas = Kelas::where('user_id', $id)->get();
-            $kelas = collect([]);
-            foreach ($kelas as $kelas)
-            {
-                $kelas->push(Kelas::find($buatKelas->kelas_id));
-            }
+            $kelas= Kelas::where('user_id', $id)->get();
         }
-
         return view('kelas.index')->with('kelas',$kelas);
     }
 
@@ -74,7 +67,18 @@ class KelasController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate([
+            'nama' => 'required',
+            'deskripsi' => 'required',
+        ]);
+
+        $kelas = new Kelas;
+        $kelas->nama = $request->input('nama');
+        $kelas->deskripsi = $request->input('deskripsi');
+        $kelas->user_id = auth()->user()->id;
+        $kelas->save();
+
+        return redirect()->action([KelasController::class, 'index']);
     }
 
     /**
