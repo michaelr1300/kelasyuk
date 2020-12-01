@@ -16,6 +16,7 @@
 
                     {{ __('You are logged in!') }}
                 </div>
+                <p class="card-header">Daftar Kelas</h2>
             </div>
         </div>
     </div>
