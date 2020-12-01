@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\User;
-use App\Pos;
+use App\Models\Mengikuti;
+use App\Models\Mengajar;
+use App\Models\User;
+use App\Models\Post;
 
 class KelasController extends Controller
 {
@@ -21,7 +23,29 @@ class KelasController extends Controller
 
     public function index()
     {
-        //
+        $id = auth()->user()->id;
+        if (auth()->user()->role === 1) //Murid
+        {
+            $mengikutis = Mengikuti::where('user_id', $id)->get();
+            $kelas = collect([]);
+            foreach ($kelas as $kelas)
+            {
+                $kelas->push(Kelas::find($mengikutis->kelas_id));
+            }
+        }
+
+        if (auth()->user()->role === 2) //Guru
+        {
+            //$mengajars = Mengajar::where('user_id', $id)->get();
+            $buatKelas = Kelas::where('user_id', $id)->get();
+            $kelas = collect([]);
+            foreach ($kelas as $kelas)
+            {
+                $kelas->push(Kelas::find($buatKelas->kelas_id));
+            }
+        }
+
+        return view('kelas.index')->with('kelas',$kelas);
     }
 
     /**
@@ -31,7 +55,14 @@ class KelasController extends Controller
      */
     public function create()
     {
-        //
+        if (auth()->user()->role === 2)
+        {
+            return view('kelas.create');
+        }
+        else
+        {
+            return redirect()->action([KelasController::class, 'index']);
+        }
     }
 
     /**
