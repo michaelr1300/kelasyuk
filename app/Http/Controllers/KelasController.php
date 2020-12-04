@@ -49,13 +49,14 @@ class KelasController extends Controller
      */
     public function create()
     {
-        if (auth()->user()->role === 2)
+        if (auth()->user()->role === 1) //Murid
+        {
+            return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
+        }
+
+        if (auth()->user()->role === 2) //Guru
         {
             return view('kelas.create');
-        }
-        else
-        {
-            return redirect()->action([KelasController::class, 'index']);
         }
     }
 
@@ -78,7 +79,7 @@ class KelasController extends Controller
         $kelas->user_id = auth()->user()->id;
         $kelas->save();
 
-        return redirect()->action([KelasController::class, 'index']);
+        return redirect()->action([KelasController::class, 'index'])->with('success','Kelas berhasil dibuat!');
     }
 
     /**
@@ -89,7 +90,34 @@ class KelasController extends Controller
      */
     public function show($id)
     {
-        //
+        $user_id = auth()->user()->id;
+        $kelas = Kelas::find($id);
+
+        if (auth()->user()->role === 1) //Murid
+        {
+            $joinedClass = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang diikuti
+            if($joinedClass->contains($id)) //Jika murid mengikuti kelas
+            {
+                //Tampilkan pos
+                return view('kelas.show')->with('kelas', $kelas);
+            }
+            else //Murid tidak mengikuti kelas
+            {
+                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak mengikuti kelas ini!');
+            }
+        }   
+        
+        if (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
+            {
+                return view('kelas.show')->with('kelas', $kelas);
+            }
+            else
+            {
+                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+            }
+        }
     }
 
     /**
@@ -100,7 +128,20 @@ class KelasController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user_id = auth()->user()->id;
+        $kelas = Kelas::find($id);
+
+        if (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
+            {
+                return view('kelas.edit')->with('kelas', $kelas);
+            }
+            else
+            {
+                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+            }
+        }
     }
 
     /**
@@ -112,7 +153,17 @@ class KelasController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validate = $request->validate([
+            'nama' => 'required',
+            'deskripsi' => 'required',
+        ]);
+
+        $kelas = Kelas::find($id);
+        $kelas->nama = $request->input('nama');
+        $kelas->deskripsi = $request->input('deskripsi');
+        $kelas->save();
+
+        return redirect()->action([KelasController::class, 'index'])->with('success','Kelas berhasil dibuat!');
     }
 
     /**
@@ -123,6 +174,27 @@ class KelasController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user_id = auth()->user()->id;
+        $kelas = Kelas::find($id);
+
+        if (auth()->user()->role === 1) //Murid
+        {
+            return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
+        }
+
+        if (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
+            {
+                $kelas->delete();
+
+                return redirect()->action([KelasController::class, 'index'])->with('success', 'Kelas telah dihapus!');
+            }
+            else
+            {
+                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+            }
+        }
+        
     }
 }
