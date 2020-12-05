@@ -98,8 +98,12 @@ class KelasController extends Controller
             $joinedClass = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang diikuti
             if($joinedClass->contains($id)) //Jika murid mengikuti kelas
             {
-                //Tampilkan pos
-                return view('kelas.show')->with('kelas', $kelas);
+                $post = Post::where('kelas_id', $id)->get();
+                return view('kelas.show', 
+                [
+                    'kelas' => $kelas,
+                    'post' => $post,
+                ] );
             }
             else //Murid tidak mengikuti kelas
             {
@@ -111,7 +115,12 @@ class KelasController extends Controller
         {
             if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
             {
-                return view('kelas.show')->with('kelas', $kelas);
+                $post = Post::where('kelas_id', $id)->get();
+                return view('kelas.show', 
+                [
+                    'kelas' => $kelas,
+                    'post' => $post,
+                ] );
             }
             else
             {
