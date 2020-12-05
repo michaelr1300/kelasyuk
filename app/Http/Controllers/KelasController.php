@@ -102,7 +102,7 @@ class KelasController extends Controller
                 return view('kelas.show', 
                 [
                     'kelas' => $kelas,
-                    'post' => $post,
+                    'posts' => $posts,
                 ] );
             }
             else //Murid tidak mengikuti kelas
@@ -115,11 +115,11 @@ class KelasController extends Controller
         {
             if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
             {
-                $post = Post::where('kelas_id', $id)->get();
+                $posts = Post::where('kelas_id', $id)->get();
                 return view('kelas.show', 
                 [
                     'kelas' => $kelas,
-                    'post' => $post,
+                    'posts' => $posts,
                 ] );
             }
             else
@@ -204,6 +204,11 @@ class KelasController extends Controller
                 return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
             }
         }
-        
+    }
+
+    public function browse()
+    {
+        $kelas= Kelas::all();
+        return view('kelas.browse')->with('kelas',$kelas);
     }
 }

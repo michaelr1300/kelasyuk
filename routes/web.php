@@ -19,6 +19,10 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\KelasController::class, 'index']);
+
+Route::get('/kelas/browse', [App\Http\Controllers\KelasController::class, 'browse'])->name('kelas.browse');
+
+
 
 Route::resource('kelas', App\Http\Controllers\KelasController::class);

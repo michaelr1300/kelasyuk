@@ -5,19 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    {{ __('You are logged in!') }}
-                </div>
-
-                <p class="card-header">Daftar Kelas</h2>
+                <h2 class="card-header">Daftar Kelas</h2>
                 <div class="card-body">
                     <a href=""><b>Big Data dan Analitik</b></a>
                     <br>
@@ -31,6 +19,7 @@
                     <br>
                     <p>Setiap hari Rabu pukul 10:00</p>
                 </div>
+            </div>
         </div>
     </div>
 </div>
