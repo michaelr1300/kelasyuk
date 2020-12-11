@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 
-class PosController extends Controller
+class PostController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,9 +21,17 @@ class PosController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create($kelas_id)
     {
-        //
+        // if (auth()->user()->role === 1) //Murid
+        // {
+        //     return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
+        // }
+
+        if (auth()->user()->role === 2) //Guru
+        {
+            return view('post.create')->with('kelas_id', $kelas_id);
+        }
     }
 
     /**
@@ -34,7 +42,26 @@ class PosController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate([
+            'judul' => 'required',
+            'link' => 'required',
+            'platform' => 'required',
+            'tanggal' => 'required',
+            'waktu' => 'required',
+        ]);
+
+        $post = new Post;
+        $post->judul = $request->input('judul');
+        $post->link = $request->input('link');
+        $post->platform = $request->input('platform');
+        $post->tanggal = $request->input('tanggal');
+        $post->waktu = $request->input('waktu');
+        //$post->kelas_id = $request->input('kelas_id');
+        $post->save();
+
+        //return redirect()->action([KelasController::class, 'index'])->with('success','Kelas berhasil dibuat!');
+
+       
     }
 
     /**

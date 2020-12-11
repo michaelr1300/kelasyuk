@@ -35,6 +35,7 @@
             @else
                 <h4 class="text-center">Belum ada jadwal kelas</h3>
             @endif
+            <a class="btn btn-info" href="{{ route('post.create', ['id' => $kelas->id]) }}">Create Post</a>
         </div>
     </div>
 </div>
