@@ -29,7 +29,12 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <a class="btn btn-info" href="{{ $post->link }}">Join</a>
+                        @if ( str_contains($post->link, 'http://' ?? 'https://') )
+                            <a class="btn btn-info" href="{{ $post->link }} " target="_blank">Join</a>
+                        @else
+                            <a class="btn btn-info" href="http://{{ $post->link }}" target="_blank">Join</a>
+                        @endif
+                        
                     </div>
                 @endforeach
             @else

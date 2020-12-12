@@ -25,6 +25,8 @@ Route::get('/kelas/browse', [App\Http\Controllers\KelasController::class, 'brows
 
 Route::get('/kelas/{id}/createpost', [App\Http\Controllers\PostController::class, 'create'])->name('post.create');
 
-Route::resource('post', App\Http\Controllers\PostController::class, ['except' => ['create']]);
+Route::resource('post', App\Http\Controllers\PostController::class, ['except' => ['create']])->parameters([
+    'post' => 'id']);;
 
-Route::resource('kelas', App\Http\Controllers\KelasController::class);
+Route::resource('kelas', App\Http\Controllers\KelasController::class)->parameters([
+    'kelas' => 'id']);

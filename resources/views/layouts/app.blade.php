@@ -75,8 +75,36 @@
             </div>
         </nav>
 
+        
         <main class="py-4">
+            <!-- Error/Success Message -->
+            <div class="d-flex">
+                <div class="col-md-8 mx-auto">
+                    @if(count($errors)>0)
+                        @foreach($errors->all() as $error)
+                            <div class="alert alert-danger">
+                                {{$error}}
+                            </div>
+                        @endforeach
+                    @endif
+    
+                    @if(session('success'))
+                        <div class="alert alert-success">
+                            {{session('success')}}
+                        </div>
+                    @endif
+    
+                    @if(session('error'))
+                        <div class="alert alert-danger">
+                            {{session('error')}}
+                        </div>
+                    @endif
+                </div>
+            </div>
+           
+            
             @yield('content')
+
         </main>
     </div>
 </body>

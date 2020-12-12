@@ -67,7 +67,7 @@
                     <label for="waktu" class="col-md-4 col-form-label text-md-right">{{ __('Waktu') }}</label>
                 
                     <div class="col-md-6">
-                        <input id="waktu" type="text" class="form-control @error('waktu') is-invalid @enderror" name="waktu" value="{{ old('waktu') }}" required autocomplete="waktu" autofocus>
+                        <input id="waktu" type="time" class="form-control @error('waktu') is-invalid @enderror" name="waktu" value="{{ old('waktu') }}" required autocomplete="waktu" autofocus>
                 
                         @error('waktu')
                             <span class="invalid-feedback" role="alert">
@@ -79,7 +79,7 @@
 
                 <div class="form-group row">                
                     <div class="col-md-6">
-                        <input id="kelas_id" type="text" class="form-control" name="kelas_id" value="{{ $kelas_id }}" >
+                        <input id="kelas_id" type="radio" class="form-control custom-radio" name="kelas_id" value="{{ $kelas_id }}" checked hidden>
                     </div>
                 </div>
 

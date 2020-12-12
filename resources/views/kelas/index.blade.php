@@ -23,7 +23,13 @@
                 @endforeach
             </div>
             @else
+            <div class="d-flex flex-column">
                 <h1 class="text-center">Anda belum mengikuti kelas apapun</h1>
+                <div class="mx-auto pt-4">
+                    <a class="btn btn-success" href="{{ route('kelas.browse') }}">Cari Kelas Sekarang</a>
+                </div>
+            </div>
+                
             @endif
         </div>
     </div>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Post;
 
 class PostController extends Controller
 {
@@ -23,10 +24,10 @@ class PostController extends Controller
      */
     public function create($kelas_id)
     {
-        // if (auth()->user()->role === 1) //Murid
-        // {
-        //     return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
-        // }
+        if (auth()->user()->role === 1) //Murid
+        {
+            return redirect()->action([KelasController::class, 'show'],['id' => $kelas_id])->with('error', 'Anda tidak memiliki akses!');
+        }
 
         if (auth()->user()->role === 2) //Guru
         {
@@ -56,10 +57,12 @@ class PostController extends Controller
         $post->platform = $request->input('platform');
         $post->tanggal = $request->input('tanggal');
         $post->waktu = $request->input('waktu');
-        //$post->kelas_id = $request->input('kelas_id');
+        $post->kelas_id = $request->input('kelas_id');
         $post->save();
 
-        //return redirect()->action([KelasController::class, 'index'])->with('success','Kelas berhasil dibuat!');
+        $kelas_id = $request->input('kelas_id');
+
+        return redirect()->action([KelasController::class, 'show'],['id' => $kelas_id])->with('success', 'Post berhasil dibuat!');
 
        
     }
