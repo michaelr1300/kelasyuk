@@ -13,7 +13,7 @@ class CreateMendaftarsTable extends Migration
      */
     public function up()
     {
-        Schema::create('requests', function (Blueprint $table) {
+        Schema::create('mendaftars', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id');
             $table->integer('kelas_id');            
@@ -28,6 +28,6 @@ class CreateMendaftarsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('requests');
+        Schema::dropIfExists('mendaftars');
     }
 }
