@@ -52,9 +52,9 @@ class User extends Authenticatable
         return $this->hasMany('App\Mengikuti');
     }
 
-    public function request()
+    public function mendaftar()
     {
-        return $this->hasMany('App\Request');
+        return $this->hasMany('App\Mendaftar');
     }
 
     public function kelas()
