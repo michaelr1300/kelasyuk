@@ -30,9 +30,9 @@ class MendaftarController extends Controller
         $user_id = auth()->user()->id;
         $listRequest = Mendaftar::where('kelas_id', $kelas_id)->pluck('user_id');
 
-        if( $listRequest->contains($user_id) )
+        if( $listRequest->contains($user_id) ) //Sudah mendaftar
         {
-            //Sudah mendaftar
+            
         }
 
         else
