@@ -20,7 +20,16 @@
                             <tr>
                                 <td class="align-middle font-weight-bold">{{ $kelas->nama }}</td>
                                 <td class="align-middle">{{ $kelas->deskripsi }}</td>
-                                <td class="align-middle text-center"><a class="btn btn-success">Join</a></td>
+                                <td class="align-middle text-center">
+                                    @if ($notAvailable->contains($kelas->id))
+                                        <button class="btn btn-success disabled" disabled>Join</button>
+                                    @else
+                                        <form method="POST" action="{{ route('kelas.apply', ['id' => $kelas->id]) }}">
+                                            @csrf
+                                            <button type="submit" class="btn btn-success">Join</button>
+                                        </form>
+                                    @endif
+                                </td>
                             </tr>
                         @endforeach
                     </tbody>

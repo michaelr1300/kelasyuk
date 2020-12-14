@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Mendaftar;
 use App\Models\Mengikuti;
 use App\Models\Mengajar;
 use App\Models\Kelas;
@@ -35,10 +36,11 @@ class KelasController extends Controller
             }
         }
 
-        if (auth()->user()->role === 2) //Guru
+        elseif (auth()->user()->role === 2) //Guru
         {
             $kelas= Kelas::where('user_id', $id)->get();
         }
+
         return view('kelas.index')->with('kelas',$kelas);
     }
 
@@ -50,11 +52,11 @@ class KelasController extends Controller
     public function create()
     {
         if (auth()->user()->role === 1) //Murid
-        {
+        { 
             return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
         }
 
-        if (auth()->user()->role === 2) //Guru
+        elseif (auth()->user()->role === 2) //Guru
         {
             return view('kelas.create');
         }
@@ -96,6 +98,7 @@ class KelasController extends Controller
         if (auth()->user()->role === 1) //Murid
         {
             $joinedClass = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang diikuti
+            
             if($joinedClass->contains($id)) //Jika murid mengikuti kelas
             {
                 $post = Post::where('kelas_id', $id)->get();
@@ -105,13 +108,14 @@ class KelasController extends Controller
                     'posts' => $posts,
                 ] );
             }
+           
             else //Murid tidak mengikuti kelas
             {
                 return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak mengikuti kelas ini!');
             }
         }   
         
-        if (auth()->user()->role === 2) //Guru
+        elseif (auth()->user()->role === 2) //Guru
         {
             if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
             {
@@ -122,6 +126,7 @@ class KelasController extends Controller
                     'posts' => $posts,
                 ] );
             }
+
             else
             {
                 return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
@@ -191,7 +196,7 @@ class KelasController extends Controller
             return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
         }
 
-        if (auth()->user()->role === 2) //Guru
+        elseif (auth()->user()->role === 2) //Guru
         {
             if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
             {
@@ -199,6 +204,7 @@ class KelasController extends Controller
 
                 return redirect()->action([KelasController::class, 'index'])->with('success', 'Kelas telah dihapus!');
             }
+
             else
             {
                 return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
@@ -208,7 +214,53 @@ class KelasController extends Controller
 
     public function browse()
     {
-        $kelas= Kelas::all();
-        return view('kelas.browse')->with('kelas',$kelas);
+        $user_id = auth()->user()->id;
+        $kelas = Kelas::all();
+        $mengikuti = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang sudah pending request
+        $mendaftar = Mendaftar::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang sudah diikuti
+        $notAvailable = $mengikuti->merge($mendaftar); //Kelas yang diikuti atau pending request (tidak ada button join di view)
+        return view('kelas.browse')->with(
+            ['kelas' => $kelas,
+            'notAvailable' => $notAvailable
+            ]);
+    }
+
+    public function member($id)
+    {
+        $user_id = auth()->user()->id;
+        $kelas = Kelas::find($id);
+
+        if (auth()->user()->role === 1) //Murid
+        {
+            return "list murid2 sekelas";
+        }
+
+        elseif (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
+            {
+                $pendings = Mendaftar::where('kelas_id', $id)->get();
+                foreach ( $pendings as $pending )
+                {
+                    $pending->user = User::find($pending->user_id); //Murid yang mendaftar
+                }
+                
+                $members = Mengikuti::where('kelas_id', $id)->get();
+                foreach ( $members as $member )
+                {
+                    $member->user = User::find($member->user_id); //Murid yang mengikuti kelas
+                }
+
+                return view('kelas.member')->with([
+                    'kelas' => $kelas,
+                    'pendings' => $pendings,
+                ]);
+            }
+
+            else
+            {
+                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+            }
+        }
     }
 }
