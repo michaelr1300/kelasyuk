@@ -30,11 +30,6 @@ class Kelas extends Model
         return $this->hasMany('App\Post');
     }
 
-    public function mengajar()
-    {
-        return $this->hasMany('App\Mengajar');
-    }
-
     public function mendaftar()
     {
         return $this->hasMany('App\Mendaftar');
