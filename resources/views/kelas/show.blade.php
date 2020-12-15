@@ -3,19 +3,38 @@
 @section('content')
 <div class="container">
     <div class="col-md-8 justify-content-center mx-auto">
-        
-        <h2 class="card-header">{{ $kelas->nama }}</h2>
-        <div class="card-body">
-            <p>{{ $kelas->deskripsi }}</p>
+        <div class="d-flex card-header">
+            <h2 class="col-8 my-auto pl-0">{{ $kelas->nama }}</h2>
+
+            @if(auth()->user()->id === $kelas->user_id)
+                <div class="col-4 d-flex justify-content-end pr-0">
+                    <form class="mr-2" method="GET" action="{{ route('kelas.edit', ['id' => $kelas->id]) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-info text-white">
+                            {{ __('Edit Kelas') }}
+                        </button>
+                    </form>
+                    <form method="POST" action="{{ route('kelas.destroy', ['id' => $kelas->id]) }}">
+                        @csrf
+                        <input type="hidden" name="_method" value="DELETE"/>
+                        <button type="submit" class="btn btn-danger text-white">
+                            {{ __('Hapus Kelas') }}
+                        </button>
+                    </form>
+                </div>
+            @endif
         </div>
 
-        @if(auth()->user()->id === $kelas->user_id)
-            <div class="row justify-content-between">
-                <div class="col">
-                    <a class="btn btn-success text-white" href="{{ route('post.create', ['id' => $kelas->id]) }}">Buat Post</a>
-                </div>
-            </div>    
-        @endif
+        <div class="card-body">
+            <p>{{ $kelas->deskripsi }}</p>
+            @if(auth()->user()->id === $kelas->user_id)
+                <div class="row justify-content-between">
+                    <div class="col">
+                        <a class="btn btn-success text-white" href="{{ route('post.create', ['id' => $kelas->id]) }}">Buat Post</a>
+                    </div>
+                </div>    
+            @endif
+        </div>
         
         <ul class="nav nav-tabs justify-content-center">
             <li class="nav-item">

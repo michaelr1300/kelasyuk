@@ -164,16 +164,15 @@ class KelasController extends Controller
         $user_id = auth()->user()->id;
         $kelas = Kelas::find($id);
 
-        if (auth()->user()->role === 2) //Guru
+        //User admin kelas
+        if($kelas->user_id === $user_id) 
         {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
-            {
-                return view('kelas.edit')->with('kelas', $kelas);
-            }
-            else
-            {
-                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
-            }
+            return view('kelas.edit')->with('kelas', $kelas);
+        }
+
+        else
+        {
+            return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
         }
     }
 
@@ -210,25 +209,42 @@ class KelasController extends Controller
         $user_id = auth()->user()->id;
         $kelas = Kelas::find($id);
 
-        if (auth()->user()->role === 1) //Murid
+        if($kelas->user_id === $user_id) 
         {
-            return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses!');
-        }
-
-        elseif (auth()->user()->role === 2) //Guru
-        {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
+            //Delete post di kelas
+            $posts = Post::where('kelas_id', $id)->get();
+            foreach ( $posts as $post )
             {
-                $kelas->delete();
-
-                return redirect()->action([KelasController::class, 'index'])->with('success', 'Kelas telah dihapus!');
+                $delPost = Post::find($post->id);
+                $delPost->delete();
             }
 
-            else
+            //Delete data anggota kelas
+            $members = Mengikuti::where('kelas_id', $id)->get();
+            foreach ( $members as $member )
             {
-                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+                $delMember = Mengikuti::find($member->id);
+                $delMember->delete();
             }
+
+            //Delete pending request ke kelas
+            $pendings = Mendaftar::where('kelas_id', $id)->get();
+            foreach ( $pendings as $pending )
+            {
+                $delPending = Mendaftar::find($pending->id);
+                $delPending->delete();
+            }
+
+            $kelas->delete();
+
+            return redirect()->action([KelasController::class, 'index'])->with('success', 'Kelas berhasil dihapus!');
         }
+
+        else 
+        {
+            return back();
+        }
+
     }
 
     public function browse()
