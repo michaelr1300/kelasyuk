@@ -28,6 +28,8 @@ Route::post('/kelas/{id}/member', [App\Http\Controllers\MendaftarController::cla
 
 Route::get('/kelas/{id}/createpost', [App\Http\Controllers\PostController::class, 'create'])->name('post.create');
 
+Route::post('/kelas/{id}/leave', [App\Http\Controllers\KelasController::class, 'leave'])->name('kelas.leave');
+
 
 
 Route::resource('post', App\Http\Controllers\PostController::class, ['except' => ['create', 'index', 'show']])->parameters([

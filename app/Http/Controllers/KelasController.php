@@ -259,4 +259,13 @@ class KelasController extends Controller
             'notAvailable' => $notAvailable
             ]);
     }
+
+    public function leave($kelas_id)
+    {
+        $user_id = auth()->user()->id;
+        $mengikuti = Mengikuti::where('user_id', $user_id)->where('kelas_id', $kelas_id)->first();
+        $mengikuti->delete();
+
+        return redirect()->action([KelasController::class, 'index'])->with('success', 'Anda telah keluar dari kelas!');
+    }
 }

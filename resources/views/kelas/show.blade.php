@@ -22,6 +22,15 @@
                         </button>
                     </form>
                 </div>
+            @else
+                <div class="col-4 d-flex justify-content-end pr-0">
+                    <form class="mr-2" method="POST" action="{{ route('kelas.leave', ['id' => $kelas->id]) }}">
+                        @csrf
+                        <button type="submit" class="btn btn-danger text-white">
+                            {{ __('Keluar Kelas') }}
+                        </button>
+                    </form>
+                </div>
             @endif
         </div>
 
