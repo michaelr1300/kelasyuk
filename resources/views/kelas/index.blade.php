@@ -7,18 +7,21 @@
             @if(count($kelas) > 0)
             <div class="card">
                 <div class="d-flex card-header">
-                    <h2 class="col-9 pl-0 my-auto">Daftar Kelas</h2>
+                    <h2 class="col-9 pl-0 my-auto">Kelas Saya</h2>
                     @if (auth()->user()->role === 1)
                         <a class="col-3 btn btn-success" href="{{ route('kelas.browse') }}">Tambah Kelas</a>
                     @elseif(auth()->user()->role === 2)
-                        <a class="col-3 btn btn-success" href="{{ route('kelas.create') }}">Tambah Kelas</a>
+                        <a class="col-3 btn btn-success" href="{{ route('kelas.create') }}">Buat Kelas</a>
                     @endif                    
                 </div>
                 @foreach ($kelas as $kelas)
                     <div class="card-body">
-                        <a href="{{ route('kelas.show', [$kelas->id]) }}"><b>{{ $kelas->nama }}</b></a>
-                        <br>
-                        <p>{{ $kelas->deskripsi }}</p>
+                        <h4><a href="{{ route('kelas.show', [$kelas->id]) }}"><b>{{ $kelas->nama }}</b></a></h4>
+                        @if ($kelas->user_id === auth()->user()->id)
+                            <span class="font-weight-bold text-success mb-4">Admin</span>
+                        @endif
+                        <p class="mb-0">{{ $kelas->deskripsi }}</p>
+                        
                     </div>
                 @endforeach
             </div>

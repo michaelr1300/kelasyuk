@@ -8,9 +8,6 @@ use App\Models\Post;
 
 class PostController extends Controller
 {
-
-    
-
     /**
      * Show the form for creating a new resource.
      *
@@ -18,15 +15,17 @@ class PostController extends Controller
      */
     public function create($kelas_id)
     {
-        if (auth()->user()->role === 1) //Murid
-        {
-            return redirect()->action([KelasController::class, 'show'],['id' => $kelas_id])->with('error', 'Anda tidak memiliki akses!');
-        }
-
-        if (auth()->user()->role === 2) //Guru
+        //User admin kelas
+        if($kelas->user_id === $user_id) 
         {
             return view('post.create')->with('kelas_id', $kelas_id);
         }
+        
+        else
+        {
+            return redirect()->action([KelasController::class, 'show'],['id' => $kelas_id])->with('error', 'Anda tidak memiliki akses!');
+        }
+        
     }
 
     /**
@@ -71,18 +70,14 @@ class PostController extends Controller
         $post = Post::find($id); //Post yang akan diedit
         $kelas = Kelas::find($post->kelas_id); //Kelas tempat post
         
-        if (auth()->user()->role === 2) //Guru
+        //Kelas dibuat oleh user (user berhak edit post)
+        if($kelas->user_id === $user_id) 
         {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh user (user berhak edit post)
-            {
-                return view('post.edit')->with('post', $post);
-            }
-            else //User guru tapi bukan admin kelas jadi tidak berhak edit post
-            {
-                return back();
-            }
+            return view('post.edit')->with('post', $post);
         }
-        else
+
+        //User bukan admin kelas jadi tidak berhak edit post
+        else 
         {
             return back();
         }
@@ -125,22 +120,18 @@ class PostController extends Controller
     public function destroy($id)
     {
         $user_id = auth()->user()->id;
-        $post = Post::find($id); //Post yang akan diedit
+        $post = Post::find($id); //Post yang akan dihapus
         $kelas = Kelas::find($post->kelas_id); //Kelas tempat post
         
-        if (auth()->user()->role === 2) //Guru
+        //Kelas dibuat oleh user (user berhak hapus post)
+        if($kelas->user_id === $user_id) 
         {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh user (user berhak hapus post)
-            {
-                return view('post.edit')->with('post', $post);
-            }
-            else //User guru tapi bukan admin kelas jadi tidak berhak hapus post
-            {
-                $post->delete();
-                return redirect()->action([KelasController::class, 'show'],['id' => $post->kelas_id])->with('success', 'Post berhasil dihapus!');
-            }
+            $post->delete();
+            return redirect()->action([KelasController::class, 'show'],['id' => $post->kelas_id])->with('success', 'Post berhasil dihapus!');
         }
-        else
+
+        //User bukan admin kelas jadi tidak berhak hapus post
+        else 
         {
             return back();
         }

@@ -24,8 +24,6 @@ Route::get('/home', [App\Http\Controllers\KelasController::class, 'index']);
 Route::get('/kelas/browse', [App\Http\Controllers\KelasController::class, 'browse'])->name('kelas.browse');
 Route::post('/kelas/browse/apply/{id}', [App\Http\Controllers\MendaftarController::class, 'apply'])->name('kelas.apply');
 
-
-Route::get('/kelas/{id}/member', [App\Http\Controllers\KelasController::class, 'member'])->name('kelas.member');
 Route::post('/kelas/{id}/member', [App\Http\Controllers\MendaftarController::class, 'response'])->name('kelas.response');
 
 Route::get('/kelas/{id}/createpost', [App\Http\Controllers\PostController::class, 'create'])->name('post.create');

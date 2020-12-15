@@ -26,19 +26,15 @@ class KelasController extends Controller
     public function index()
     {
         $id = auth()->user()->id;
-        if (auth()->user()->role === 1) //Murid
-        {
-            $mengikutis = Mengikuti::where('user_id', $id)->get();
-            $kelas = collect([]);
-            foreach ($mengikutis as $mengikuti)
-            {
-                $kelas->push(Kelas::find($mengikuti->kelas_id));
-            }
-        }
 
-        elseif (auth()->user()->role === 2) //Guru
+        //Kelas yang dibuat user
+        $kelas= Kelas::where('user_id', $id)->get();
+
+        //Kelas yang diikuti user
+        $mengikutis = Mengikuti::where('user_id', $id)->get();
+        foreach ($mengikutis as $mengikuti)
         {
-            $kelas= Kelas::where('user_id', $id)->get();
+            $kelas->push(Kelas::find($mengikuti->kelas_id));
         }
 
         return view('kelas.index')->with('kelas',$kelas);
@@ -95,42 +91,65 @@ class KelasController extends Controller
         $user_id = auth()->user()->id;
         $kelas = Kelas::find($id);
 
-        if (auth()->user()->role === 1) //Murid
+        //Kelas yang diikuti user
+        $joinedClass = Mengikuti::where('user_id', $user_id)->pluck('kelas_id');
+
+        //Jika user mengikuti kelas
+        if($joinedClass->contains($id))
         {
-            $joinedClass = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang diikuti
-            
-            if($joinedClass->contains($id)) //Jika murid mengikuti kelas
+            //Data post di kelas
+            $posts = Post::where('kelas_id', $id)->get();
+
+            //Data anggota kelas
+            $members = Mengikuti::where('kelas_id', $id)->get();
+            foreach ( $members as $member )
             {
-                $post = Post::where('kelas_id', $id)->get();
-                return view('kelas.show', 
-                [
-                    'kelas' => $kelas,
-                    'posts' => $posts,
-                ] );
-            }
-           
-            else //Murid tidak mengikuti kelas
-            {
-                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak mengikuti kelas ini!');
-            }
-        }   
-        
-        elseif (auth()->user()->role === 2) //Guru
-        {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
-            {
-                $posts = Post::where('kelas_id', $id)->get();
-                return view('kelas.show', 
-                [
-                    'kelas' => $kelas,
-                    'posts' => $posts,
-                ] );
+                $member->user = User::find($member->user_id);
             }
 
-            else
+            return view('kelas.show', 
+            [
+                'kelas' => $kelas,
+                'posts' => $posts,
+                'members' => $members
+            ] );
+        } 
+
+        //Jika user pembuat kelas
+        elseif($kelas->user_id === $user_id)
+        {
+            //Data post di kelas
+            $posts = Post::where('kelas_id', $id)->get();
+
+            //Data anggota kelas
+            $members = Mengikuti::where('kelas_id', $id)->get();
+            foreach ( $members as $member )
             {
-                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
+                //User yang anggota kelas
+                $member->user = User::find($member->user_id);
             }
+
+            //Data pending request mendaftar kelas
+            $pendings = Mendaftar::where('kelas_id', $id)->get();
+            foreach ( $pendings as $pending )
+            {
+                //User yang request join kelas
+                $pending->user = User::find($pending->user_id);
+            }
+
+            return view('kelas.show', 
+            [
+                'kelas' => $kelas,
+                'posts' => $posts,
+                'pendings' => $pendings,
+                'members' => $members
+            ] );
+        }
+
+        //User bukan anggota atau pembuat kelas
+        else
+        {
+            return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
         }
     }
 
@@ -223,44 +242,5 @@ class KelasController extends Controller
             ['kelas' => $kelas,
             'notAvailable' => $notAvailable
             ]);
-    }
-
-    public function member($id)
-    {
-        $user_id = auth()->user()->id;
-        $kelas = Kelas::find($id);
-
-        if (auth()->user()->role === 1) //Murid
-        {
-            return "list murid2 sekelas";
-        }
-
-        elseif (auth()->user()->role === 2) //Guru
-        {
-            if($kelas->user_id === $user_id) //Kelas dibuat oleh guru
-            {
-                $pendings = Mendaftar::where('kelas_id', $id)->get();
-                foreach ( $pendings as $pending )
-                {
-                    $pending->user = User::find($pending->user_id); //Murid yang mendaftar
-                }
-                
-                $members = Mengikuti::where('kelas_id', $id)->get();
-                foreach ( $members as $member )
-                {
-                    $member->user = User::find($member->user_id); //Murid yang mengikuti kelas
-                }
-
-                return view('kelas.member')->with([
-                    'kelas' => $kelas,
-                    'pendings' => $pendings,
-                ]);
-            }
-
-            else
-            {
-                return redirect()->action([KelasController::class, 'index'])->with('error', 'Anda tidak memiliki akses untuk kelas ini!');
-            }
-        }
     }
 }

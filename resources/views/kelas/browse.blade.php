@@ -5,10 +5,12 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             @if(count($kelas) > 0)
-                <div class="d-flex mb-4">
-                    <h2>Daftar Kelas</h2>                  
+                <div class="d-flex card-header mb-4">
+                    <h2 class="col-9 pl-0 my-auto">Daftar Kelas</h2> 
+                    @if(auth()->user()->role === 2)
+                        <a class="col-3 btn btn-success" href="{{ route('kelas.create') }}">Buat Kelas</a>
+                    @endif               
                 </div>
-                
                 <table class="table table-striped">
                     <thead>
                         <th>Nama Kelas</th>
