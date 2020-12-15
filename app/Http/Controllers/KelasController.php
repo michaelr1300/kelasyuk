@@ -177,7 +177,7 @@ class KelasController extends Controller
         $kelas->deskripsi = $request->input('deskripsi');
         $kelas->save();
 
-        return redirect()->action([KelasController::class, 'index'])->with('success','Kelas berhasil dibuat!');
+        return redirect()->action([KelasController::class, 'show'], ['id' => $kelas->id])->with('success','Kelas berhasil diubah!');
     }
 
     /**

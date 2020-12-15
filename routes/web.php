@@ -32,7 +32,7 @@ Route::get('/kelas/{id}/createpost', [App\Http\Controllers\PostController::class
 
 
 
-Route::resource('post', App\Http\Controllers\PostController::class, ['except' => ['create']])->parameters([
+Route::resource('post', App\Http\Controllers\PostController::class, ['except' => ['create', 'index', 'show']])->parameters([
     'post' => 'id']);;
 
 Route::resource('kelas', App\Http\Controllers\KelasController::class)->parameters([
