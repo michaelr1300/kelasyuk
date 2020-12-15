@@ -3,19 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Kelas;
 use App\Models\Post;
 
 class PostController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+
+    
 
     /**
      * Show the form for creating a new resource.
@@ -63,19 +57,6 @@ class PostController extends Controller
         $kelas_id = $request->input('kelas_id');
 
         return redirect()->action([KelasController::class, 'show'],['id' => $kelas_id])->with('success', 'Post berhasil dibuat!');
-
-       
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -86,7 +67,25 @@ class PostController extends Controller
      */
     public function edit($id)
     {
-        //
+        $user_id = auth()->user()->id;
+        $post = Post::find($id); //Post yang akan diedit
+        $kelas = Kelas::find($post->kelas_id); //Kelas tempat post
+        
+        if (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh user (user berhak edit post)
+            {
+                return view('post.edit')->with('post', $post);
+            }
+            else //User guru tapi bukan admin kelas jadi tidak berhak edit post
+            {
+                return back();
+            }
+        }
+        else
+        {
+            return back();
+        }
     }
 
     /**
@@ -98,7 +97,23 @@ class PostController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validate = $request->validate([
+            'judul' => 'required',
+            'link' => 'required',
+            'platform' => 'required',
+            'tanggal' => 'required',
+            'waktu' => 'required',
+        ]);
+
+        $post = Post::find($id);
+        $post->judul = $request->input('judul');
+        $post->link = $request->input('link');
+        $post->platform = $request->input('platform');
+        $post->tanggal = $request->input('tanggal');
+        $post->waktu = $request->input('waktu');
+        $post->save();
+
+        return redirect()->action([KelasController::class, 'show'],['id' => $post->kelas_id])->with('success', 'Post berhasil diubah!');
     }
 
     /**
@@ -109,6 +124,25 @@ class PostController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user_id = auth()->user()->id;
+        $post = Post::find($id); //Post yang akan diedit
+        $kelas = Kelas::find($post->kelas_id); //Kelas tempat post
+        
+        if (auth()->user()->role === 2) //Guru
+        {
+            if($kelas->user_id === $user_id) //Kelas dibuat oleh user (user berhak hapus post)
+            {
+                return view('post.edit')->with('post', $post);
+            }
+            else //User guru tapi bukan admin kelas jadi tidak berhak hapus post
+            {
+                $post->delete();
+                return redirect()->action([KelasController::class, 'show'],['id' => $post->kelas_id])->with('success', 'Post berhasil dihapus!');
+            }
+        }
+        else
+        {
+            return back();
+        }
     }
 }
