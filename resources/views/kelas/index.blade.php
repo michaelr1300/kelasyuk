@@ -29,7 +29,11 @@
             <div class="d-flex flex-column">
                 <h1 class="text-center">Anda belum mengikuti kelas apapun</h1>
                 <div class="mx-auto pt-4">
-                    <a class="btn btn-success" href="{{ route('kelas.browse') }}">Cari Kelas Sekarang</a>
+                    @if(auth()->user()->role === 2)
+                        <a class="btn btn-success" href="{{ route('kelas.create') }}">Buat Kelas</a>
+                    @else
+                        <a class="btn btn-success" href="{{ route('kelas.browse') }}">Cari Kelas Sekarang</a>
+                    @endif     
                 </div>
             </div>
                 
