@@ -15,6 +15,9 @@ class PostController extends Controller
      */
     public function create($kelas_id)
     {
+        $kelas = Kelas::find($kelas_id);
+        $user_id = auth()->user()->id;
+
         //User admin kelas
         if($kelas->user_id === $user_id) 
         {
