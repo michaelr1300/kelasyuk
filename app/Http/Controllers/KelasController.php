@@ -253,10 +253,12 @@ class KelasController extends Controller
         $kelas = Kelas::all();
         $mengikuti = Mengikuti::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang sudah pending request
         $mendaftar = Mendaftar::where('user_id', $user_id)->pluck('kelas_id'); //Kelas yang sudah diikuti
-        $notAvailable = $mengikuti->merge($mendaftar); //Kelas yang diikuti atau pending request (tidak ada button join di view)
+        //$notAvailable = $mengikuti->merge($mendaftar); //Kelas yang diikuti atau pending request (tidak ada button join di view)
         return view('kelas.browse')->with(
             ['kelas' => $kelas,
-            'notAvailable' => $notAvailable
+            'mengikuti' => $mengikuti,
+            'mendaftar' => $mendaftar
+            //'notAvailable' => $notAvailable
             ]);
     }
 

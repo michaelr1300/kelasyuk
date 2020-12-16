@@ -27,9 +27,9 @@
     <body class="antialiased">
         <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
             
-            <div class="max-w-6xl mx-auto sm:px-6 lg:px-8">
+            <div class="col">
                 <div class="d-flex flex-column justify-content-center pt-8 sm:pt-0">
-                    <img class="p-2" src="{{ asset('img/logo.png')}}">
+                    <img class="w-75 mx-auto p-2" src="{{ asset('img/logo.png')}}">
                     @if (Route::has('login'))
                     <div class="p-2 justify-content-center text-center">
                         @auth

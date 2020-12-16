@@ -13,9 +13,9 @@
                 </div>
                 <table class="table table-striped">
                     <thead>
-                        <th>Nama Kelas</th>
-                        <th>Deskripsi</th>
-                        <th></th>
+                        <th scope="col" style="width: 35%">Nama Kelas</th>
+                        <th scope="col" style="width: 40%">Deskripsi</th>
+                        <th scope="col" style="width: 25%"></th>
                     </thead>
                     <tbody>
                         @foreach ($kelas as $kelas)
@@ -23,12 +23,16 @@
                                 <td class="align-middle font-weight-bold">{{ $kelas->nama }}</td>
                                 <td class="align-middle">{{ $kelas->deskripsi }}</td>
                                 <td class="align-middle text-center">
-                                    @if ($notAvailable->contains($kelas->id))
-                                        <button class="btn btn-success disabled" disabled>Join</button>
+                                    @if ($mendaftar->contains($kelas->id))
+                                        <span class="text-dark">Menunggu Persetujuan</span>
+                                    @elseif ($mengikuti->contains($kelas->id))
+                                        <span class="text-success">Sudah Bergabung</span>
+                                    @elseif ($kelas->user_id ===  auth()->user()->id)
+                                        <span class="text-success">Admin</span>
                                     @else
                                         <form method="POST" action="{{ route('kelas.apply', ['id' => $kelas->id]) }}">
                                             @csrf
-                                            <button type="submit" class="btn btn-success">Join</button>
+                                            <button type="submit" class="btn btn-success">Bergabung</button>
                                         </form>
                                     @endif
                                 </td>
